@@ -1,0 +1,2 @@
+2023-09-19 17:16:46 - File copied: D:\Desktop\TestTask\source\test.txt -> D:\Desktop\TestTask\replica\test.txt
+2023-09-19 17:21:46 - Error during synchronization: [Errno 13] Permission denied: 'D:\\Desktop\\TestTask\\source\\test_subdirectory'
