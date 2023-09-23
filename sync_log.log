@@ -1,6 +1,6 @@
-2023-09-19 17:16:46 - File copied: D:\Desktop\TestTask\source\test.txt -> D:\Desktop\TestTask\replica\test.txt
-2023-09-19 17:21:46 - Error during synchronization: [Errno 13] Permission denied: 'D:\\Desktop\\TestTask\\source\\test_subdirectory'
-2023-09-19 17:28:50 - Error during synchronization: [Errno 13] Permission denied: 'D:\\Desktop\\TestTask\\source\\test_subdirectory'
-2023-09-19 17:29:50 - Error during synchronization: [Errno 13] Permission denied: 'D:\\Desktop\\TestTask\\source\\test_subdirectory'
-2023-09-19 17:30:26 - Error during synchronization: [Errno 13] Permission denied: 'D:\\Desktop\\TestTask\\source\\test_subdirectory'
-2023-09-19 17:31:26 - Error during synchronization: [Errno 13] Permission denied: 'D:\\Desktop\\TestTask\\source\\test_subdirectory'
+2023-09-23 15:48:15 - File updated: D:\Desktop\TestTask\source\test.txt -> D:\Desktop\TestTask\replica\test.txt
+2023-09-23 15:51:15 - File copied: D:\Desktop\TestTask\source\numbers.txt -> D:\Desktop\TestTask\replica\numbers.txt
+2023-09-23 15:54:24 - Error during synchronization: [Errno 2] No such file or directory: 'D:\\Desktop\\TestTask\\replica\\testSubdirectory\\test.txt'
+2023-09-23 15:55:24 - Error during synchronization: [Errno 2] No such file or directory: 'D:\\Desktop\\TestTask\\replica\\testSubdirectory\\test.txt'
+2023-09-23 15:56:24 - Error during synchronization: [Errno 2] No such file or directory: 'D:\\Desktop\\TestTask\\replica\\testSubdirectory\\test.txt'
+2023-09-23 15:57:24 - Error during synchronization: [Errno 2] No such file or directory: 'D:\\Desktop\\TestTask\\replica\\testSubdirectory\\test.txt'

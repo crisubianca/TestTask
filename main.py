@@ -3,42 +3,54 @@ import sys
 import shutil
 import time
 import logging
+import hashlib
+
+def calculate_md5(file_path):
+    md5_hash = hashlib.md5()
+    with open(file_path, "rb") as file:
+        while True:
+            data = file.read(8192)
+            if not data:
+                break
+            md5_hash.update(data)
+    return md5_hash.hexdigest()
 
 def synchronize_folders(source_folder, replica_folder):
-    # print("Current working directory:", os.getcwd())
-
     try:
-        # get a list of all files in the source folder
-        source_files = set(os.listdir(source_folder))
-        print(source_files)
+        for dirpath, dirnames, filenames in os.walk(source_folder):
+            for filename in filenames:
+                source_file_path = os.path.join(dirpath, filename)
+                relative_path = os.path.relpath(source_file_path, source_folder)
+                replica_file_path = os.path.join(replica_folder, relative_path)
 
-        # get a list of all files in the replica folder
-        replica_files = set(os.listdir(replica_folder))
+                # Check if the file exists in the replica folder
+                if not os.path.exists(replica_file_path):
+                    shutil.copy2(source_file_path, replica_file_path)
+                    logging.info(f"File copied: {source_file_path} -> {replica_file_path}")
+                else:
+                    # Calculate MD5 hashes of source and replica files
+                    source_hash = calculate_md5(source_file_path)
+                    replica_hash = calculate_md5(replica_file_path)
 
-        # calculate files to be added or updated in the replica folder
-        to_copy = source_files - replica_files
+                    # Compare hashes to check if content has changed
+                    if source_hash != replica_hash:
+                        shutil.copy2(source_file_path, replica_file_path)
+                        logging.info(f"File updated: {source_file_path} -> {replica_file_path}")
 
-        # calculate files to be removed from the replica folder
-        to_remove = replica_files - source_files
+        # Remove files that exist in replica but not in source
+        for dirpath, dirnames, filenames in os.walk(replica_folder):
+            for filename in filenames:
+                replica_file_path = os.path.join(dirpath, filename)
+                relative_path = os.path.relpath(replica_file_path, replica_folder)
+                source_file_path = os.path.join(source_folder, relative_path)
 
-        # copy new or modified files from source to replica
-        for file in to_copy:
-            print("1--In process to copy new or modified files from source to replica\n")
-            source_file_path = os.path.join(source_folder, file)
-            replica_file_path = os.path.join(replica_folder, file)
-            shutil.copy2(source_file_path, replica_file_path)
-            logging.info(f"File copied: {source_file_path} -> {replica_file_path}")
-
-        # remove files that exist in replica but not in source
-        for file in to_remove:
-            print("2--In process to remove files that exist in replica but not in source\n")
-            replica_file_path = os.path.join(replica_folder, file)
-            os.remove(replica_file_path)
-            logging.info(f"File removed: {replica_file_path}")
+                # Check if the file exists in the source folder
+                if not os.path.exists(source_file_path):
+                    os.remove(replica_file_path)
+                    logging.info(f"File removed: {replica_file_path}")
 
     except Exception as e:
         logging.error(f"Error during synchronization: {str(e)}")
-
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
@@ -60,4 +72,3 @@ if __name__ == "__main__":
             logging.error(f"Error during synchronization: {str(e)}")
 
         time.sleep(interval)
-
