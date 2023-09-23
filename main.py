@@ -17,9 +17,9 @@ def calculate_md5(file_path):
 
 def synchronize_folders(source_folder, replica_folder):
     try:
-        for dirpath, dirnames, filenames in os.walk(source_folder):
-            for filename in filenames:
-                source_file_path = os.path.join(dirpath, filename)
+        for root, dirs, files in os.walk(source_folder):
+            for file in files:
+                source_file_path = os.path.join(root, file)
                 relative_path = os.path.relpath(source_file_path, source_folder)
                 replica_file_path = os.path.join(replica_folder, relative_path)
 
@@ -37,10 +37,20 @@ def synchronize_folders(source_folder, replica_folder):
                         shutil.copy2(source_file_path, replica_file_path)
                         logging.info(f"File updated: {source_file_path} -> {replica_file_path}")
 
-        # Remove files that exist in replica but not in source
-        for dirpath, dirnames, filenames in os.walk(replica_folder):
-            for filename in filenames:
-                replica_file_path = os.path.join(dirpath, filename)
+            for directory in dirs:
+                source_dir_path = os.path.join(root, directory)
+                relative_path = os.path.relpath(source_dir_path, source_folder)
+                replica_dir_path = os.path.join(replica_folder, relative_path)
+
+                # Check if the directory exists in the replica folder
+                if not os.path.exists(replica_dir_path):
+                    os.makedirs(replica_dir_path)  # Create the missing directory
+                    logging.info(f"Directory created: {replica_dir_path}")
+
+        # Remove files and directories that exist in replica but not in source
+        for root, dirs, files in os.walk(replica_folder):
+            for file in files:
+                replica_file_path = os.path.join(root, file)
                 relative_path = os.path.relpath(replica_file_path, replica_folder)
                 source_file_path = os.path.join(source_folder, relative_path)
 
@@ -48,6 +58,16 @@ def synchronize_folders(source_folder, replica_folder):
                 if not os.path.exists(source_file_path):
                     os.remove(replica_file_path)
                     logging.info(f"File removed: {replica_file_path}")
+
+            for directory in dirs:
+                replica_dir_path = os.path.join(root, directory)
+                relative_path = os.path.relpath(replica_dir_path, replica_folder)
+                source_dir_path = os.path.join(source_folder, relative_path)
+
+                # Check if the directory exists in the source folder
+                if not os.path.exists(source_dir_path):
+                    shutil.rmtree(replica_dir_path)  # Remove the directory and its content
+                    logging.info(f"Directory removed: {replica_dir_path}")
 
     except Exception as e:
         logging.error(f"Error during synchronization: {str(e)}")
